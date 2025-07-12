@@ -27,16 +27,20 @@ def update_low_stock():
     }
     """
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     try:
         response = requests.post(
             "http://localhost:8000/graphql",
             json={"query": mutation},
             headers={"Content-Type": "application/json"}
         )
-        updates = response.json()["data"]["updateLowStockProducts"]["updatedProducts"]
+        data = response.json().get("data", {}).get("updateLowStockProducts", {})
+        products = data.get("updatedProducts", [])
+
         with open("/tmp/low_stock_updates_log.txt", "a") as f:
-            for product in updates:
-                f.write(f"{timestamp} - {product['name']} updated to stock {product['stock']}\n")
+            for product in products:
+                f.write(f"{timestamp} - {product['name']} new stock: {product['stock']}\n")
+
     except Exception as e:
         with open("/tmp/low_stock_updates_log.txt", "a") as f:
-            f.write(f"{timestamp} - Error: {e}\n")
+            f.write(f"{timestamp} - ERROR: {str(e)}\n")
