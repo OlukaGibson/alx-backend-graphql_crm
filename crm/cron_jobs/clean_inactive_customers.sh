@@ -21,7 +21,7 @@ cutoff = timezone.now() - timedelta(days=365)
 deleted, _ = Customer.objects.filter(orders__isnull=True, created_at__lt=cutoff).delete()
 print(deleted)
 ")
-
+alx-backend-graphql_crm/crm/cron_jobs/clean_inactive_customers.sh
 # Check if deletion succeeded
 if [ $? -eq 0 ]; then
     echo "$timestamp - Deleted $deleted_count inactive customers" >> /tmp/customer_cleanup_log.txt
