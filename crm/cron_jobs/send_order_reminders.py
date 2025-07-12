@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 import json
+from gql import gql, Client
 
 query = """
 query {
