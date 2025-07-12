@@ -4,3 +4,4 @@ celery
 django-celery-beat
 gql
 requests
+django-crontab==0.7.1
