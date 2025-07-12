@@ -71,3 +71,24 @@ class Mutation(CRMMutation, graphene.ObjectType):
     pass
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
+
+import graphene
+
+class UpdateLowStockProducts(graphene.Mutation):
+    class Output:
+        success = graphene.Boolean()
+        updated_products = graphene.List(lambda: ProductType)
+
+    def mutate(root, info):
+        from crm.models import Product
+        low_stock = Product.objects.filter(stock__lt=10)
+        updated = []
+        for product in low_stock:
+            product.stock += 10
+            product.save()
+            updated.append(product)
+        return UpdateLowStockProducts(success=True, updated_products=updated)
+
+class Mutation(graphene.ObjectType):
+    update_low_stock_products = UpdateLowStockProducts.Field()
+
